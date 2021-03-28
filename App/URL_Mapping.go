@@ -1,9 +1,15 @@
 package App
 
-import "github.com/ezesali/BookStore_Users_API/Controllers/UsersController"
+import (
+	UsersController "github.com/ezesali/BookStore_Users_API/Controllers/Users"
+)
 
 func MapsURLs() {
 
-	router.GET("/ping", UsersController.Ping())
+	router.GET("/users/search", UsersController.FindUser)
+
+	router.GET("/users/:uid", UsersController.GetUser)
+
+	router.POST("/users", UsersController.CreateUser)
 
 }
