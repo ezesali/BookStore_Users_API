@@ -1,8 +1,14 @@
 package main
 
-import "github.com/ezesali/BookStore_Users_API/App"
+import (
+	"fmt"
+
+	"github.com/ezesali/BookStore_Users_API/App"
+)
 
 func main() {
+
+	fmt.Println("Starting Main Aplication")
 
 	App.StartApp()
 }

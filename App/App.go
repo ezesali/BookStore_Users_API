@@ -1,6 +1,10 @@
 package App
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+)
 
 var (
 	router = gin.Default()
@@ -8,7 +12,14 @@ var (
 
 func StartApp() {
 
+	fmt.Println("Looking for MapsURLs..")
+
 	MapsURLs()
-	router.Run(":8080")
+
+	PORT := ":8080"
+
+	router.Run(PORT)
+
+	fmt.Println("Running on port: ", PORT[1:])
 
 }

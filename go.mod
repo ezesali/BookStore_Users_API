@@ -3,9 +3,14 @@ module github.com/ezesali/BookStore_Users_API
 go 1.16
 
 require (
+	github.com/IBM/cloudant-go-sdk v0.0.30
+	github.com/IBM/go-sdk-core v1.1.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang/protobuf v1.5.1 // indirect
+	github.com/google/uuid v1.2.0 // indirect
+	github.com/joho/godotenv v1.3.0
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

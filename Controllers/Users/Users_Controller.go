@@ -14,17 +14,20 @@ import (
 	"github.com/ezesali/BookStore_Users_API/Utils/Errors"
 )
 
+// Response Error
+var resError Errors.ResError
+
 func CreateUser(c *gin.Context) {
+
+	fmt.Println("Starting Create Controller")
+
 	//Declare User to be create
 	var user Users.User
 
-	//Looking for request
+	//Looking for request raw body
 	bytes, err := ioutil.ReadAll(c.Request.Body)
 
-	// Response Error
-	var resError Errors.ResError
-
-	//Handle error
+	//Handle request error
 	if err != nil {
 		fmt.Println(err.Error())
 
@@ -35,6 +38,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(resError.Status, resError)
 		return
 	}
+
 	//Handle JSON error
 	if err := json.Unmarshal(bytes, &user); err != nil {
 		fmt.Println(err.Error())
@@ -66,8 +70,14 @@ func CreateUser(c *gin.Context) {
 
 func GetUser(c *gin.Context) {
 
-	c.String(http.StatusNotImplemented, "Not implement")
+	user, getErr := UsersService.GetUser(c.Param("uid"))
 
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 func FindUser(c *gin.Context) {

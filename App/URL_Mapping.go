@@ -6,10 +6,13 @@ import (
 
 func MapsURLs() {
 
-	router.GET("/users/search", UsersController.FindUser)
+	//Map all users
+	router.GET("/findusers/search", UsersController.FindUser)
 
+	//Map specific user
 	router.GET("/users/:uid", UsersController.GetUser)
 
+	//Create a user
 	router.POST("/users", UsersController.CreateUser)
 
 }
