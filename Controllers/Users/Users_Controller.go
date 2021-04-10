@@ -70,6 +70,8 @@ func CreateUser(c *gin.Context) {
 
 func GetUser(c *gin.Context) {
 
+	fmt.Println("Starting Get Controller")
+
 	user, getErr := UsersService.GetUser(c.Param("uid"))
 
 	if getErr != nil {

@@ -11,7 +11,7 @@ func CreateUser(user Users.User) (*Users.User, *Errors.ResError) {
 
 	fmt.Println("Starting Create User Service")
 
-	if err := user.Validate(); err != nil {
+	if err := user.ValidateCreate(); err != nil {
 		return nil, err
 	}
 
@@ -23,8 +23,17 @@ func CreateUser(user Users.User) (*Users.User, *Errors.ResError) {
 }
 
 func GetUser(email string) (*Users.User, *Errors.ResError) {
+
+	fmt.Println("Starting Get User Service")
+
+	//Email from parameter URL
 	result := &Users.User{Email: email}
 
+	if err := result.ValidateGet(); err != nil {
+		return nil, err
+	}
+
+	// Get service
 	if err := result.Get(); err != nil {
 		return nil, err
 	}

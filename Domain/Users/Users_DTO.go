@@ -20,6 +20,7 @@ import (
 
 var (
 	resError Errors.ResError
+	UserGet  interface{}
 )
 
 func (user *User) Save() *Errors.ResError {
@@ -93,7 +94,7 @@ func (user *User) Save() *Errors.ResError {
 	}
 
 	// Format Sysdate
-	user.DateCreated = time.Now().Format("02/01/2006 03:04:05")
+	user.DateCreated = time.Now().Format("02/01/2006 15:04:05")
 
 	// Setting Cloudant Document
 	UserDoc.SetProperty("first_name", user.FirstName)
@@ -165,31 +166,76 @@ func (user *User) Save() *Errors.ResError {
 
 func (user *User) Get() *Errors.ResError {
 
-	fmt.Println("GETTTT")
+	fmt.Println("Starting Geting User")
 
-	/*if err := UsersDB.Client.Ping(); err != nil {
+	FoundUser := false
 
-		panic(err)
+	//Search for all docs in DB
+	resultQuery, _, err := UsersDB.Client.PostAllDocs(
+		UsersDB.Client.NewPostAllDocsOptions("users"),
+	)
 
-	}*/
+	if err != nil {
 
-	/*result := Users_DB[user.Id]
-
-	if result == nil {
-
-		resError.Message = "An error has ocurred"
-		resError.Description = fmt.Sprintf("User %d not found", user.Id)
-		resError.Status = http.StatusNotFound
+		resError.Message = "Cannot get all Documents"
+		resError.Description = err.Error()
+		resError.Status = http.StatusBadRequest
 
 		return &resError
+
 	}
 
-	user.Id = result.Id
-	user.FirstName = result.FirstName
-	user.LastName = result.LastName
-	user.Email = result.Email
-	user.DateCreated = result.DateCreated*/
+	//If i have docs
+	if len(resultQuery.Rows) > 1 {
+
+		fmt.Println("Found Documents")
+
+		// Iterate document IDs
+		for document := 0; document < len(resultQuery.Rows); document++ {
+
+			// Get document data
+			resGetDoc, _, err := UsersDB.Client.GetDocument(
+				UsersDB.Client.NewGetDocumentOptions("users", *resultQuery.Rows[document].ID),
+			)
+
+			if err != nil {
+
+				resError.Message = "Cannot get Document: " + *resultQuery.Rows[document].ID
+				resError.Description = err.Error()
+				resError.Status = http.StatusBadRequest
+
+				return &resError
+			}
+
+			// Email not found, is not register
+			if resGetDoc.GetProperty("email") != user.Email && !FoundUser && document == len(resultQuery.Rows)-1 {
+
+				resError.Message = "Email not found"
+				resError.Description = "Email is not register"
+				resError.Status = http.StatusBadRequest
+
+				return &resError
+
+			}
+
+			// Email Found
+			if resGetDoc.GetProperty("email") == user.Email {
+
+				fmt.Println("User Found")
+
+				FoundUser = true
+
+				user.FirstName = fmt.Sprintf("%v", resGetDoc.GetProperty("first_name"))
+				user.LastName = fmt.Sprintf("%v", resGetDoc.GetProperty("last_name"))
+				user.DateCreated = fmt.Sprintf("%v", resGetDoc.GetProperty("date_created"))
+
+			}
+		}
+	}
+
+	resStr, _ := json.MarshalIndent(user, "", " ")
+
+	fmt.Println("Get result: ", string(resStr))
 
 	return nil
-
 }
